@@ -54,6 +54,73 @@ Lock or unlock:
 
 Supported actions: `lock`, `unlock`, `temp_unlock` (unlock and lock after a while)
 
+## Home Assistant
+You can now use your Yeelock with Home Assistant. This requires using a Docker container to run the Yeehack server. The Yeehack server will use Bluetooth to communicate with your Yeelock.
+
+### Known issues
+Sometimes communication with Yeelock can fail. This seems to be due to Home Assistant, or some other application on the host, locking the Bluetooth adapter. This could be fixed in the future with the development of a Yeelock-specific Home Assistant integration.
+
+### Steps
+#### Create Docker container
+1. Create file `docker-compose.yml` with contents:
+
+```
+version: '3'
+services:
+  yeehack:
+    build:
+      context: https://github.com/aso824/yeehack.git
+      dockerfile: Dockerfile
+    ports:
+      - "8888:8080"
+    volumes:
+      - '/var/run/dbus:/run/dbus:ro'
+```
+2. Run `docker compose up -d`
+
+Yeehack server will now be running on port 8888.
+
+#### Add Home Assistant configuration
+3. Obtain your Yeelock keys using the steps above.
+
+4. Locate your `configuration.yaml` file and add the following, as an example, substituting in your keys:
+
+```
+input_boolean:
+  yeelock_state:
+    name: Yeelock State
+    icon: mdi:lock
+    initial: true
+
+lock:
+  - platform: template
+    name: Yeelock Lock
+    value_template: "{{ is_state('input_boolean.yeelock_state', 'on') }}"
+    unique_id: yeelock
+    lock:
+      - service: rest_command.yeelock_lock
+      - service: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.yeelock_state
+    unlock:
+      - service: rest_command.yeelock_unlock
+      - service: input_boolean.turn_off
+        target:
+          entity_id: input_boolean.yeelock_state
+
+rest_command:
+  yeelock_lock:
+    url: http://127.0.0.1:8888/do
+    method: POST
+    content_type:  'application/json; charset=utf-8'
+    payload: '{"sn": "YYYYY", "sign_key": "XXXXX", "action": "lock"}'
+  yeelock_unlock:
+    url: http://127.0.0.1:8888/do
+    method: POST
+    content_type:  'application/json; charset=utf-8'
+    payload: '{"sn": "YYYYY", "sign_key": "XXXXX", "action": "unlock"}'
+```
+
 ## Development
 
 See [PROTOCOL.md](PROTOCOL.md) for details and feel free to create a pull request with improvements.  

@@ -3,6 +3,11 @@ from __future__ import annotations
 from time import time
 
 from bleak import BleakScanner, BleakClient, BLEDevice, AdvertisementData
+import bleak
+from bleak.exc import BleakDBusError
+
+import asyncio
+from asyncio.exceptions import TimeoutError
 
 from connection import Connection
 from errors import DeviceNotFoundError
@@ -35,10 +40,14 @@ class Lock:
         self.device = device
 
     async def get_battery(self) -> int:
-        async with BleakClient(self.device, timeout=2.0) as client:
-            connection = Connection(client, self.sign_key)
-
-            return await connection.battery_level()
+        try:
+            async with BleakClient(self.device, timeout=5.0) as client:
+                connection = Connection(client, self.sign_key)
+                return await connection.battery_level()
+        except (asyncio.exceptions.TimeoutError, bleak.exc.BleakDBusError) as e:
+            # Handle the error
+            print(f"Error: {e}")
+            return -1
 
     async def lock(self) -> None:
         await self.__do_action(UnlockMode.LOCK)
