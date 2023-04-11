@@ -1,5 +1,11 @@
 # Base image
-FROM python:3.9
+FROM python:3.9-alpine
+
+# add required packages
+RUN \
+    apk add --no-cache \
+        bluez \
+        git
 
 # Set the working directory
 WORKDIR /app

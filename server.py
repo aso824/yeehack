@@ -20,7 +20,7 @@ class Server:
         runner = web.AppRunner(app)
         await runner.setup()
 
-        site = web.TCPSite(runner)
+        site = web.TCPSite(runner, port=self.port)
         await site.start()
 
         await Event().wait()
