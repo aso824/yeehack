@@ -120,6 +120,11 @@ rest_command:
     method: POST
     content_type:  'application/json; charset=utf-8'
     payload: '{"sn": "YYYYY", "sign_key": "XXXXX", "timeout": "5", "action": "unlock"}'
+  yeelock_temp_unlock:
+    url: http://127.0.0.1:8888/do
+    method: POST
+    content_type:  'application/json; charset=utf-8'
+    payload: '{"sn": "YYYYY", "sign_key": "XXXXX", "timeout": "5", "action": "temp_unlock"}'
 ```
 
 ## Development
