@@ -71,6 +71,7 @@ services:
     build:
       context: https://github.com/aso824/yeehack.git
       dockerfile: Dockerfile
+    network_mode: host # this may not be necessary for all setups but works best with hosts bluetooth
     ports:
       - "8888:8080"
     volumes:
