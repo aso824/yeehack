@@ -15,14 +15,15 @@ from packet import ActionPacket, UnlockMode
 
 
 class Lock:
-    def __init__(self, sn: str, sign_key: bytearray):
+    def __init__(self, sn: str, sign_key: bytearray, timeout: int = 5.0):
         self.sn: str = sn
         self.sign_key: bytearray = sign_key
+        self.timeout: int = timeout
         self.device = None
 
     @staticmethod
-    async def create(sn: str, sign_key: bytearray) -> Lock:
-        self = Lock(sn, sign_key)
+    async def create(sn: str, sign_key: bytearray, timeout: int) -> Lock:
+        self = Lock(sn, sign_key, timeout)
 
         await self.__find_mac()
 
@@ -41,7 +42,7 @@ class Lock:
 
     async def get_battery(self) -> int:
         try:
-            async with BleakClient(self.device, timeout=5.0) as client:
+            async with BleakClient(self.device, timeout=self.timeout) as client:
                 connection = Connection(client, self.sign_key)
                 return await connection.battery_level()
         except (asyncio.exceptions.TimeoutError, bleak.exc.BleakDBusError) as e:
@@ -59,7 +60,7 @@ class Lock:
         await self.__do_action(UnlockMode.TEMP_UNLOCK)
 
     async def __do_action(self, mode: UnlockMode) -> None:
-        async with BleakClient(self.device, timeout=2.0) as client:
+        async with BleakClient(self.device, timeout=self.timeout) as client:
             connection = Connection(client, self.sign_key)
 
             await connection.init()
