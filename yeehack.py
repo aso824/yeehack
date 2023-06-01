@@ -23,6 +23,10 @@ subparsers = parser.add_subparsers(help='Available commands:', dest='command', m
 
 parser_battery = subparsers.add_parser('battery', help='Get battery level')
 parser_battery.add_argument('sn', help='Serial number (string) of your Yeelock - 8 alphanumeric characters')
+parser_battery.add_argument(
+    '--timeout',
+    help='Bluetooth timeout, useful in noisy environments',
+    type=int, default=5.0, required=False)
 
 parser_do = subparsers.add_parser('do', help='Execute lock/unlock/temp_unlock action')
 parser_do.add_argument(
@@ -32,6 +36,10 @@ parser_do.add_argument(
 )
 parser_do.add_argument('sn', help='Serial number (string) of your Yeelock - 8 alphanumeric characters')
 parser_do.add_argument('sign_key', help='Bluetooth sign key from Yeelock server')
+parser_do.add_argument(
+    '--timeout',
+    help='Bluetooth timeout, useful in noisy environments',
+    type=int, default=5.0, required=False)
 
 parser_battery = subparsers.add_parser('fetch', help='Get info about your locks from Yeelock server')
 
@@ -58,13 +66,13 @@ logging.basicConfig(level=log_levels[args.log_level])
 
 async def main():
     if args.command == 'battery':
-        lock = await Lock.create(args.sn, bytearray())
+        lock = await Lock.create(args.sn, bytearray(), args.timeout)
         level = await lock.get_battery()
 
         print("Battery level: %d%%" % level)
 
     elif args.command == 'do':
-        lock = await Lock.create(args.sn, bytearray.fromhex(args.sign_key))
+        lock = await Lock.create(args.sn, bytearray.fromhex(args.sign_key), args.timeout)
 
         if args.action == 'lock':
             await lock.lock()

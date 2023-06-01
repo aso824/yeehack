@@ -46,11 +46,11 @@ Default port is 8080, add `--port [PORT]` to change.
 
 Fetch info about lock (currently only battery state):
 
-    curl -XPOST http://localhost:8080/info -d '{"sn": "..."}'
+    curl -XPOST http://localhost:8080/info -d '{"sn": "...", "timeout": "5"}'
     
 Lock or unlock:
 
-    curl -XPOST http://localhost:8080/do -d '{"sn": "...", "sign_key": "...", "action": "unlock"}' 
+    curl -XPOST http://localhost:8080/do -d '{"sn": "...", "sign_key": "...", "timeout": "5", "action": "unlock"}' 
 
 Supported actions: `lock`, `unlock`, `temp_unlock` (unlock and lock after a while)
 
@@ -71,6 +71,7 @@ services:
     build:
       context: https://github.com/aso824/yeehack.git
       dockerfile: Dockerfile
+    network_mode: host # this may not be necessary for all setups but works best with hosts bluetooth
     ports:
       - "8888:8080"
     volumes:
@@ -113,12 +114,17 @@ rest_command:
     url: http://127.0.0.1:8888/do
     method: POST
     content_type:  'application/json; charset=utf-8'
-    payload: '{"sn": "YYYYY", "sign_key": "XXXXX", "action": "lock"}'
+    payload: '{"sn": "YYYYY", "sign_key": "XXXXX", "timeout": "5", "action": "lock"}'
   yeelock_unlock:
     url: http://127.0.0.1:8888/do
     method: POST
     content_type:  'application/json; charset=utf-8'
-    payload: '{"sn": "YYYYY", "sign_key": "XXXXX", "action": "unlock"}'
+    payload: '{"sn": "YYYYY", "sign_key": "XXXXX", "timeout": "5", "action": "unlock"}'
+  yeelock_temp_unlock:
+    url: http://127.0.0.1:8888/do
+    method: POST
+    content_type:  'application/json; charset=utf-8'
+    payload: '{"sn": "YYYYY", "sign_key": "XXXXX", "timeout": "5", "action": "temp_unlock"}'
 ```
 
 ## Development

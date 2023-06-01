@@ -30,11 +30,12 @@ class Server:
         try:
             data = await request.json()
             sn = data['sn']
+            timeout = int(data['timeout'])
         except (json.decoder.JSONDecodeError, AttributeError, KeyError):
             return web.json_response({'error': 'Invalid input'}, status=400)
 
         try:
-            lock = await Lock.create(sn, bytearray())
+            lock = await Lock.create(sn, bytearray(), timeout)
             level = await lock.get_battery()
         except errors.DeviceNotFoundError:
             return web.json_response({'error': 'Device not found'}, status=400)
@@ -48,11 +49,12 @@ class Server:
             action = data['action']
             sn = data['sn']
             sign_key = data['sign_key']
+            timeout = int(data['timeout'])
         except (json.decoder.JSONDecodeError, AttributeError, KeyError):
             return web.json_response({'error': 'Invalid input'}, status=400)
 
         try:
-            lock = await Lock.create(sn, bytearray.fromhex(sign_key))
+            lock = await Lock.create(sn, bytearray.fromhex(sign_key), timeout)
         except ValueError:
             return web.json_response({'error': 'Sign key is not a hexadecimal string'}, status=400)
         except errors.DeviceNotFoundError:
