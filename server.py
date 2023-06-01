@@ -30,7 +30,7 @@ class Server:
         try:
             data = await request.json()
             sn = data['sn']
-            timeout = int(data['timeout'])
+            timeout = int(data.get('timeout', 10))
         except (json.decoder.JSONDecodeError, AttributeError, KeyError):
             return web.json_response({'error': 'Invalid input'}, status=400)
 
@@ -49,7 +49,7 @@ class Server:
             action = data['action']
             sn = data['sn']
             sign_key = data['sign_key']
-            timeout = int(data['timeout'])
+            timeout = int(data.get('timeout', 10))
         except (json.decoder.JSONDecodeError, AttributeError, KeyError):
             return web.json_response({'error': 'Invalid input'}, status=400)
 

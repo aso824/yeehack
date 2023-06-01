@@ -52,7 +52,8 @@ Lock or unlock:
 
     curl -XPOST http://localhost:8080/do -d '{"sn": "...", "sign_key": "...", "timeout": "5", "action": "unlock"}' 
 
-Supported actions: `lock`, `unlock`, `temp_unlock` (unlock and lock after a while)
+Supported actions: `lock`, `unlock`, `temp_unlock` (unlock and lock after a while).  
+`timeout` is optional, default is 10 seconds.
 
 ## Home Assistant
 You can now use your Yeelock with Home Assistant. This requires using a Docker container to run the Yeehack server. The Yeehack server will use Bluetooth to communicate with your Yeelock.
@@ -61,25 +62,11 @@ You can now use your Yeelock with Home Assistant. This requires using a Docker c
 Sometimes communication with Yeelock can fail. This seems to be due to Home Assistant, or some other application on the host, locking the Bluetooth adapter. This could be fixed in the future with the development of a Yeelock-specific Home Assistant integration.
 
 ### Steps
-#### Create Docker container
-1. Create file `docker-compose.yml` with contents:
-
-```
-version: '3'
-services:
-  yeehack:
-    build:
-      context: https://github.com/aso824/yeehack.git
-      dockerfile: Dockerfile
-    network_mode: host # this may not be necessary for all setups but works best with hosts bluetooth
-    ports:
-      - "8888:8080"
-    volumes:
-      - '/var/run/dbus:/run/dbus:ro'
-```
+#### Start server using Docker
+1. Clone repository or copy file `docker-compose.yml` to empty directory
 2. Run `docker compose up -d`
 
-Yeehack server will now be running on port 8888.
+Yeehack server will now be running on port **8888**.
 
 #### Add Home Assistant configuration
 3. Obtain your Yeelock keys using the steps above.

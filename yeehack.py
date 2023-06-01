@@ -26,7 +26,7 @@ parser_battery.add_argument('sn', help='Serial number (string) of your Yeelock -
 parser_battery.add_argument(
     '--timeout',
     help='Bluetooth timeout, useful in noisy environments',
-    type=int, default=5.0, required=False)
+    type=int, default=10.0, required=False)
 
 parser_do = subparsers.add_parser('do', help='Execute lock/unlock/temp_unlock action')
 parser_do.add_argument(
@@ -39,7 +39,7 @@ parser_do.add_argument('sign_key', help='Bluetooth sign key from Yeelock server'
 parser_do.add_argument(
     '--timeout',
     help='Bluetooth timeout, useful in noisy environments',
-    type=int, default=5.0, required=False)
+    type=int, default=10.0, required=False)
 
 parser_battery = subparsers.add_parser('fetch', help='Get info about your locks from Yeelock server')
 
