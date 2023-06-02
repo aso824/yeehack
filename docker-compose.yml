@@ -4,7 +4,7 @@ services:
     build:
       context: https://github.com/aso824/yeehack.git
       dockerfile: Dockerfile
-    ports:
-      - "8888:8080"
     volumes:
-      - '/var/run/dbus:/run/dbus:ro'
+      - /var/run/dbus:/run/dbus:ro
+    network_mode: host
+    restart: unless-stopped
