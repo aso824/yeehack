@@ -55,64 +55,8 @@ Lock or unlock:
 Supported actions: `lock`, `unlock`, `temp_unlock` (unlock and lock after a while).  
 `timeout` is optional, default is 10 seconds.
 
-## Home Assistant
-You can now use your Yeelock with Home Assistant. This requires using a Docker container to run the Yeehack server. The Yeehack server will use Bluetooth to communicate with your Yeelock.
-
-### Known issues
-Sometimes communication with Yeelock can fail. This seems to be due to Home Assistant, or some other application on the host, locking the Bluetooth adapter. This could be fixed in the future with the development of a Yeelock-specific Home Assistant integration.
-
-### Steps
-#### Start server using Docker
-1. Clone repository or copy file `docker-compose.yml` to empty directory
-2. Run `docker compose up -d`
-
-Yeehack server will now be running on port **8888**.
-
-#### Add Home Assistant configuration
-3. Obtain your Yeelock keys using the steps above.
-
-4. Locate your `configuration.yaml` file and add the following, as an example, substituting in your keys:
-
-```
-input_boolean:
-  yeelock_state:
-    name: Yeelock State
-    icon: mdi:lock
-    initial: true
-
-lock:
-  - platform: template
-    name: Yeelock Lock
-    value_template: "{{ is_state('input_boolean.yeelock_state', 'on') }}"
-    unique_id: yeelock
-    lock:
-      - service: rest_command.yeelock_lock
-      - service: input_boolean.turn_on
-        target:
-          entity_id: input_boolean.yeelock_state
-    unlock:
-      - service: rest_command.yeelock_unlock
-      - service: input_boolean.turn_off
-        target:
-          entity_id: input_boolean.yeelock_state
-
-rest_command:
-  yeelock_lock:
-    url: http://127.0.0.1:8888/do
-    method: POST
-    content_type:  'application/json; charset=utf-8'
-    payload: '{"sn": "YYYYY", "sign_key": "XXXXX", "timeout": "5", "action": "lock"}'
-  yeelock_unlock:
-    url: http://127.0.0.1:8888/do
-    method: POST
-    content_type:  'application/json; charset=utf-8'
-    payload: '{"sn": "YYYYY", "sign_key": "XXXXX", "timeout": "5", "action": "unlock"}'
-  yeelock_temp_unlock:
-    url: http://127.0.0.1:8888/do
-    method: POST
-    content_type:  'application/json; charset=utf-8'
-    payload: '{"sn": "YYYYY", "sign_key": "XXXXX", "timeout": "5", "action": "temp_unlock"}'
-```
+## Home Assistant integration
+See https://github.com/codyc1515/hacs_yeelock to install a HACS integration that adds support for Yeelock to Home Assistant.
 
 ## Development
 
