@@ -56,7 +56,7 @@ Supported actions: `lock`, `unlock`, `temp_unlock` (unlock and lock after a whil
 `timeout` is optional, default is 10 seconds.
 
 ## Home Assistant integration
-See https://github.com/codyc1515/hacs_yeelock to install a HACS integration that adds support for Yeelock to Home Assistant.
+See https://github.com/codyc1515/ha-yeelock to install a HACS integration that adds support for Yeelock to Home Assistant.
 
 ## Development
 
